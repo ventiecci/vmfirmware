@@ -6,11 +6,11 @@
         {
             "name": "Win32",
             "includePath": [
-                "c:/Users/UECCI/Documents/PlatformIO/Projects/pwm_esc/include",
-                "c:/Users/UECCI/Documents/PlatformIO/Projects/pwm_esc/src",
+                "c:/Users/UECCI/Documents/proyectos/respirador/SRC/vmfirmware/include",
+                "c:/Users/UECCI/Documents/proyectos/respirador/SRC/vmfirmware/src",
                 "C:/Users/UECCI/.platformio/packages/framework-mbed/cmsis/TARGET_CORTEX_M",
                 "C:/Users/UECCI/.platformio/packages/framework-mbed",
-                "c:/Users/UECCI/Documents/PlatformIO/Projects/pwm_esc/.pio/build/nucleo_f411re",
+                "c:/Users/UECCI/Documents/proyectos/respirador/SRC/vmfirmware/.pio/build/nucleo_f411re",
                 "C:/Users/UECCI/.platformio/packages/framework-mbed/drivers",
                 "C:/Users/UECCI/.platformio/packages/framework-mbed/drivers/internal",
                 "C:/Users/UECCI/.platformio/packages/framework-mbed/events",
@@ -57,11 +57,11 @@
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
-                    "c:/Users/UECCI/Documents/PlatformIO/Projects/pwm_esc/include",
-                    "c:/Users/UECCI/Documents/PlatformIO/Projects/pwm_esc/src",
+                    "c:/Users/UECCI/Documents/proyectos/respirador/SRC/vmfirmware/include",
+                    "c:/Users/UECCI/Documents/proyectos/respirador/SRC/vmfirmware/src",
                     "C:/Users/UECCI/.platformio/packages/framework-mbed/cmsis/TARGET_CORTEX_M",
                     "C:/Users/UECCI/.platformio/packages/framework-mbed",
-                    "c:/Users/UECCI/Documents/PlatformIO/Projects/pwm_esc/.pio/build/nucleo_f411re",
+                    "c:/Users/UECCI/Documents/proyectos/respirador/SRC/vmfirmware/.pio/build/nucleo_f411re",
                     "C:/Users/UECCI/.platformio/packages/framework-mbed/drivers",
                     "C:/Users/UECCI/.platformio/packages/framework-mbed/drivers/internal",
                     "C:/Users/UECCI/.platformio/packages/framework-mbed/events",
