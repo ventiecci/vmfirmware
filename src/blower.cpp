@@ -7,6 +7,7 @@ Blower::Blower (const PinName pwmPinOut): blower(pwmPinOut) {
     m_speed = DEFAULT_BLOWER_SPEED;
     blower.period_ms(20);
     blower.pulsewidth_us(m_speed);
+	
     
 };
 

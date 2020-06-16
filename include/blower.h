@@ -5,7 +5,6 @@
 #include <parameter.h>
 
 
-
 class Blower{
 public:
     Blower (const PinName pwmPinOut);
@@ -19,6 +18,8 @@ private:
     PwmOut blower;
     bool m_stopped;
     uint32_t m_speed;
+ 
+
 };
 
 #endif

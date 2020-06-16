@@ -14,7 +14,7 @@ public:
     float readRAW(void);
     float readPsi(void);
     float readCMH2O(void);
-    bool min_pressure_level();
+    bool min_pressure_level(float val);
     bool max_pressure_level(float val);
     void set_min_pressure(uint16_t val);
     void set_max_pressure(uint16_t val);

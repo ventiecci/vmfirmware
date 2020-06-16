@@ -36,8 +36,11 @@
 
  };
 
-bool  pressure_sensor::min_pressure_level(){
-
+bool  pressure_sensor::min_pressure_level(float val){
+     if (_min_pressure>(val-2)){
+              return 1;
+       }       
+       return 0;
 
 };
 bool  pressure_sensor::max_pressure_level(float val){

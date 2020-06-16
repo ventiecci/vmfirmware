@@ -29,7 +29,7 @@ Timeout timeout_inh;
 Timeout timeout_exh;
 
 
-
+unsigned int  status_blower=0; //  0: off 1: inhalaciòn, 2: exhalaciòn:
 unsigned int  RR=5; // frecuencia de respiración  minuto, entre 5 y 35 por minuto
 unsigned int  PIP=40;  // Maxima presión en Cm
 unsigned int  PEEP=0;   // minima presión en Cm
@@ -39,11 +39,13 @@ float tp= 60/RR; //s
 float t_inh = tp/(3); //s
 float t_exh = 2*t_inh; //s
 
+
 /*fuction*/
 void delay( int v);
 void off_cycle();
 void inhalation_cycle();
 void exhalation_cycle();
+void controlON();
 
 /*end fuction*/
 
@@ -53,21 +55,57 @@ void delay( int v){
 
 
 
+
+void controlON(){
+
+    float flow_act;
+    float  presion_act;
+
+    if (status_blower==BLOWER_OFF)
+        inhalation_cycle();
+    switch (status_blower){
+        case BLOWER_OFF:
+            inhalation_cycle();
+        break;
+        case BLOWER_INH:
+            if( pre_sensor.max_pressure_level(presion_act)){
+            buzzer.beep(500,0.1);
+        }
+        break;
+        case BLOWER_EXH:
+            if( pre_sensor.min_pressure_level(presion_act)){
+                buzzer.beep(500,0.1);
+        }
+        break;
+      } 
+
+    flow_act=flow_sensor_inh.read_flow();
+    presion_act=pre_sensor.readCMH2O();
+    cmd.debug_m("%0.6f \t",flow_act );
+    cmd.debug_m("%0.6f \t",presion_act);
+    cmd.sendOneData(pre_sensor.get_max_pressure());
+    cmd.debug_m("\n");
+    
+   
+    //  cmd.sendOneData( flow_act);
+    //  cmd.sendOneData( presion_act);
+
+}
+
 void off_cycle()
 {
-    cmd.debug_m("sistema off\n" );
+    status_blower=BLOWER_OFF;
     blower1.speed(1000);
     blower2.speed(1000);
     svalve_inh.close();
     svalve_exh.close();
 
 }
-int delta_p=0;
+
 void inhalation_cycle(){
-//    cmd.debug_m("sistema inhalación\n" );
-    blower1.speed(1500);
-   // blower2.speed(1500);
-    blower2.cmH2O(pre_sensor.get_max_pressure()-delta_p);
+    status_blower=BLOWER_INH;
+    blower1.speed(pre_sensor.get_max_pressure());
+    blower2.speed(1000);
     svalve_inh.open();
     svalve_exh.close();
     buzzer.beep(440,0.1);
@@ -81,16 +119,16 @@ void inhalation_cycle(){
 }
 
 void exhalation_cycle(){
- //   cmd.debug_m("sistema exhalación\n" );
-  
+    status_blower=BLOWER_EXH;
+    blower2.cmH2O(pre_sensor.get_min_pressure());
+ 
     if (t_exh>1.5){ 
         blower1.stop();
         blower2.stop();
     }
     svalve_inh.close();
-   // wait_ms(100);
     svalve_exh.open();
-    if (VMstatus==1)
+    if (VMstatus==VM_STATUS_ON)
         timeout_exh.attach(&inhalation_cycle, t_exh);   // time to off
     else
         timeout_exh.attach(&off_cycle, t_exh);   // time to off
@@ -107,13 +145,13 @@ void   servo_valve_test(Servo_valve* svalve){
         { 
             timetest.reset(); 
             if(onm==1) {
-                cmd.debug_m("m2\n" );
+                cmd.debug_m("close svalve\n" );
                 svalve->close();
                 onm=0;
             
             }else {
                 svalve->open();
-                cmd.debug_m("m3\n" );
+                cmd.debug_m("open svalve\n" );
                 onm=1;
             }
         }
@@ -164,6 +202,10 @@ int  changeParameter(){
           case TC_FLOW_MAX:
             cmd.debug_m("el valor deL FLUJO es %d\n",b);
             break;
+          case TC_VM_STATUS:
+            VMstatus=b;
+            cmd.debug_m("el valor deL VMstatus es %d\n",b);
+            break;
           default:
             cmd.debug_m("NO SE RECONOE el comando  %c con el valor %d\n",*scmd, b);
             break;
@@ -178,17 +220,11 @@ int  main()
 {
 
     VMstatus=VM_STATUS_OFF;
+    flow_sensor_inh.init();  
    
     cmd.debug_m("sistema iniciado test en modo debug" );
-    wait(5.0);
-   
-    flow_sensor_inh.init();
-    
-    VMstatus=VM_STATUS_TEST;
-    VMstatus=VM_STATUS_ON;
-    exhalation_cycle();
-    float flow_act;
-    float  presion_act;
+    wait(2.0);
+
     while(1) {
         if (cmd.newcmd_detected){  
            cmd.newcmd_detected=false;
@@ -196,24 +232,8 @@ int  main()
         }
         switch(VMstatus){
         case VM_STATUS_ON:
-           flow_act=flow_sensor_inh.read_flow();
-           presion_act=pre_sensor.readCMH2O();
-           cmd.debug_m("%0.6f \t", flow_act );
-           cmd.debug_m("%0.6f \t",presion_act);
-           cmd.sendOneData(pre_sensor.get_max_pressure());
-           cmd.debug_m("\n");
-           
-            if( pre_sensor.max_pressure_level(presion_act)){
-                      buzzer.beep(500,0.1);
-     //                 delta_p=delta_p+1;
-
-             }
- 
-        //  cmd.sendOneData( flow_act);
-        //  cmd.sendOneData( presion_act);
-        
-            delay(100);
-
+            controlON();
+            delay(50);
             break;
         case VM_STATUS_TEST:
             servo_valve_test(&svalve_inh);
