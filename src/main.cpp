@@ -35,7 +35,7 @@ unsigned int  PIP=40;  // Maxima presión en Cm
 unsigned int  PEEP=0;   // minima presión en Cm
 unsigned int  RIR; // relación de inhalación-exhalación , para covid 1 a 2  a 1 a 3,2
 
-unsigned int testangle=90;
+unsigned int testangle=10;
 float tp= 60/RR; //s
 float t_inh = tp/(3); //s
 float t_exh = 2*t_inh; //s
@@ -206,6 +206,10 @@ int  changeParameter(){
           case TC_VM_STATUS:
             VMstatus=b;
             cmd.debug_m("el valor deL VMstatus es %d\n",b);
+            break;
+          case TC_ANGLE_EXH:
+            testangle=b;
+            cmd.debug_m("el valor deL testangle es %d\n",b);
             break;
           default:
             cmd.debug_m("NO SE RECONOE el comando  %c con el valor %d\n",*scmd, b);

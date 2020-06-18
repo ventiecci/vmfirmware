@@ -47,6 +47,7 @@
 #define TC_PEEP             'E'
 #define TC_FLOW_MAX         'F'
 #define TC_VM_STATUS        'V'
+#define TC_ANGLE_EXH        'A'
 
 
 
