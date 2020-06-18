@@ -17,7 +17,7 @@ pressure_sensor pre_sensor(PC_0);
 Blower blower1(PB_1);
 Blower blower2(PA_11);
 flow_sensor flow_sensor_inh(PB_9, PB_8);
-flow_sensor flow_sensor_enh(PB_3, PB_10);
+flow_sensor flow_sensor_exh(PB_3, PB_10);
 
 telemetry_telecontrol  cmd(USBTX, USBRX);
 
@@ -35,6 +35,7 @@ unsigned int  PIP=40;  // Maxima presión en Cm
 unsigned int  PEEP=0;   // minima presión en Cm
 unsigned int  RIR; // relación de inhalación-exhalación , para covid 1 a 2  a 1 a 3,2
 
+unsigned int testangle=90;
 float tp= 60/RR; //s
 float t_inh = tp/(3); //s
 float t_exh = 2*t_inh; //s
@@ -61,25 +62,23 @@ void controlON(){
     float flow_act;
     float  presion_act;
 
-    if (status_blower==BLOWER_OFF)
-        inhalation_cycle();
     switch (status_blower){
         case BLOWER_OFF:
             inhalation_cycle();
         break;
         case BLOWER_INH:
             if( pre_sensor.max_pressure_level(presion_act)){
-            buzzer.beep(500,0.1);
+//            buzzer.beep(500,0.1);
         }
         break;
         case BLOWER_EXH:
             if( pre_sensor.min_pressure_level(presion_act)){
-                buzzer.beep(500,0.1);
+ //               buzzer.beep(500,0.1);
         }
         break;
       } 
 
-    flow_act=flow_sensor_inh.read_flow();
+    flow_act=flow_sensor_inh.read_flow()-flow_sensor_exh.read_flow();
     presion_act=pre_sensor.readCMH2O();
     cmd.debug_m("%0.6f \t",flow_act );
     cmd.debug_m("%0.6f \t",presion_act);
@@ -94,6 +93,7 @@ void controlON(){
 
 void off_cycle()
 {
+    cmd.debug_m("system off\n" );
     status_blower=BLOWER_OFF;
     blower1.speed(1000);
     blower2.speed(1000);
@@ -104,8 +104,10 @@ void off_cycle()
 
 void inhalation_cycle(){
     status_blower=BLOWER_INH;
-    blower1.speed(pre_sensor.get_max_pressure());
-    blower2.speed(1000);
+    blower1.cmH2O(pre_sensor.get_max_pressure());
+    if (t_exh>1.5){ 
+        blower2.stop();
+    }
     svalve_inh.open();
     svalve_exh.close();
     buzzer.beep(440,0.1);
@@ -124,10 +126,9 @@ void exhalation_cycle(){
  
     if (t_exh>1.5){ 
         blower1.stop();
-        blower2.stop();
     }
     svalve_inh.close();
-    svalve_exh.open();
+    svalve_exh.openAngle(testangle);
     if (VMstatus==VM_STATUS_ON)
         timeout_exh.attach(&inhalation_cycle, t_exh);   // time to off
     else
@@ -221,6 +222,7 @@ int  main()
 
     VMstatus=VM_STATUS_OFF;
     flow_sensor_inh.init();  
+    flow_sensor_exh.init();  
    
     cmd.debug_m("sistema iniciado test en modo debug" );
     wait(2.0);

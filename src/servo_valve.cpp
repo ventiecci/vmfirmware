@@ -10,6 +10,13 @@ Servo_valve::Servo_valve (const PinName pwmPinOut): servo_valveO(pwmPinOut) {
 };
 
 
+void Servo_valve::openAngle(uint16_t val_angle) {
+        uint16_t v = ( (val_angle )*(OPEN_SERVO_VALVE - CLOSE_SERVO_VALVE)/(90) + CLOSE_SERVO_VALVE );
+        status = true;
+        servopos = v;
+        servo_valveO.pulsewidth_us(v);
+
+};
 
 void Servo_valve::open() {
         status = true;

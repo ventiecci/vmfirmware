@@ -9,7 +9,7 @@
 
 /*@ parameter blower*/
 #define MIN_BLOWER_SPEED 1000u
-#define MAX_BLOWER_SPEED 1950u
+#define MAX_BLOWER_SPEED 2000u
 #define DEFAULT_BLOWER_SPEED 1500u
 #define MAX_BLOWER_CMH20  50
 #define MIN_BLOWER_CMH20  0

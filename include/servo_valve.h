@@ -9,7 +9,9 @@ class Servo_valve{
 public:
    Servo_valve (const PinName pwmPinOut); 
    void open();
-   void  close();
+   void close();
+   void openAngle(uint16_t val_angle);
+
    uint32_t getstatus();
    uint32_t getposvalve();
 
