@@ -5,13 +5,15 @@
 #include <flow_sensor.h>
 #include <pressure_sensor.h>
 #include <servo_valve.h>
-#include "buzzer.h"
+#include <buzzer.h>
+#include <o2_valve.h>
 
 buzzer_ctrl   buzzer(PB_7); 
 
-Servo_valve svalve_inh(PA_15);
-Servo_valve svalve_exh(PA_0);
+Servo_valve svalve_inh(PC_8);
+Servo_valve svalve_exh(PA_15);
 pressure_sensor pre_sensor(PC_0);
+//o2_valve_ctrl o2_valve(PB_5);
 
 
 Blower blower1(PB_1);
@@ -56,7 +58,6 @@ void delay( int v){
 
 
 
-
 void controlON(){
 
     float flow_act;
@@ -73,6 +74,7 @@ void controlON(){
         break;
         case BLOWER_EXH:
             if( pre_sensor.min_pressure_level(presion_act)){
+                svalve_exh.openAngle(testangle);
  //               buzzer.beep(500,0.1);
         }
         break;
@@ -102,6 +104,8 @@ void off_cycle()
 
 }
 
+
+
 void inhalation_cycle(){
     status_blower=BLOWER_INH;
     blower1.cmH2O(pre_sensor.get_max_pressure());
@@ -128,7 +132,7 @@ void exhalation_cycle(){
         blower1.stop();
     }
     svalve_inh.close();
-    svalve_exh.openAngle(testangle);
+    svalve_exh.open();
     if (VMstatus==VM_STATUS_ON)
         timeout_exh.attach(&inhalation_cycle, t_exh);   // time to off
     else
