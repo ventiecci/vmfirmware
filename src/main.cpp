@@ -10,10 +10,10 @@
 
 buzzer_ctrl   buzzer(PB_7); 
 
-Servo_valve svalve_inh(PC_8);
+Servo_valve svalve_inh(PA_1);
 Servo_valve svalve_exh(PA_15);
 pressure_sensor pre_sensor(PC_0);
-//o2_valve_ctrl o2_valve(PB_5);
+//o2_valve_ctrl o2_valve(PB_13);
 
 
 Blower blower1(PB_1);
@@ -41,6 +41,7 @@ unsigned int testangle=10;
 float tp= 60/RR; //s
 float t_inh = tp/(3); //s
 float t_exh = 2*t_inh; //s
+float t_iesleep = 0.1; //s
 
 
 /*fuction*/
@@ -48,6 +49,7 @@ void delay( int v);
 void off_cycle();
 void inhalation_cycle();
 void exhalation_cycle();
+void inh_exh_sleep_cycle();
 void controlON();
 
 /*end fuction*/
@@ -111,26 +113,34 @@ void inhalation_cycle(){
     blower1.cmH2O(pre_sensor.get_max_pressure());
     if (t_exh>1.5){ 
         blower2.stop();
-    }
+   }
     svalve_inh.open();
     svalve_exh.close();
     buzzer.beep(440,0.1);
   
     if (VMstatus==1)
-        timeout_inh.attach(&exhalation_cycle, t_inh);   // time to off
+        timeout_inh.attach(&inh_exh_sleep_cycle, t_inh);   // time to off
     else
         timeout_inh.attach(&off_cycle, t_inh);   // time to off
 
 
+}
+void inh_exh_sleep_cycle(){
+    if (t_exh>1.5){ 
+        blower1.stop();
+    }
+  
+    if (VMstatus==1)
+        timeout_inh.attach(&exhalation_cycle, t_iesleep);   // time to off
+    else
+        timeout_inh.attach(&off_cycle, t_iesleep);   // time to off
+  
 }
 
 void exhalation_cycle(){
     status_blower=BLOWER_EXH;
     blower2.cmH2O(pre_sensor.get_min_pressure());
  
-    if (t_exh>1.5){ 
-        blower1.stop();
-    }
     svalve_inh.close();
     svalve_exh.open();
     if (VMstatus==VM_STATUS_ON)
@@ -173,6 +183,8 @@ void change_resp_rate(int vRR){
         tp= 60/float(RR); //s
         t_inh = tp/(3); //s
         t_exh = 2*t_inh; //s
+        t_iesleep=t_exh*0.1;
+        t_exh=t_exh-t_iesleep;
     }
     cmd.debug_m("Nuevo valor para tp=%f, t_inh=%0.4f, t_exh=%f \n", tp, t_inh,t_exh);
 }
