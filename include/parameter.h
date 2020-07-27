@@ -30,8 +30,13 @@
 
 #define VM_STATUS_OFF   0
 #define VM_STATUS_ON    1
-#define VM_STATUS_TEST  2
-#define VM_STATUS_ERROR 3
+#define VM_STATUS_ERROR 2
+#define VM_TEST_BLOWER1 3
+#define VM_TEST_BLOWER2 4
+#define VM_SERVO_VALVE_TEST_INH  5
+#define VM_SERVO_VALVE_TEST_EXH  6
+#define VM_ELECTRO_VALVE_O2_TEST  7
+
 
 /*@ parameter  STATUS VM_STATUS_ON*/
 
@@ -48,6 +53,10 @@
 #define TC_FLOW_MAX         'F'
 #define TC_VM_STATUS        'V'
 #define TC_ANGLE_EXH        'A'
+#define TC_FiO2             'O'
+#define TC_DUTTY            'D'
+
+
 
 
 

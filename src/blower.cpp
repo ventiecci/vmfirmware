@@ -2,13 +2,13 @@
 #include "mbed.h"
 //#include "arduino.h"
 
-Blower::Blower (const PinName pwmPinOut): blower(pwmPinOut) {
+Blower::Blower (const PinName pwmPinOut, char * name): blower(pwmPinOut) {
     m_stopped = true;
     m_speed = DEFAULT_BLOWER_SPEED;
+    _name=name;
     blower.period_ms(20);
     blower.pulsewidth_us(m_speed);
-	
-    
+	   
 };
 
 
@@ -33,6 +33,8 @@ void Blower::speed(uint16_t speed) {
 };
 
 
+
+
 void Blower::stop() {
     m_stopped = true;
     blower.pulsewidth_us(MIN_BLOWER_SPEED);
@@ -40,4 +42,13 @@ void Blower::stop() {
 
 uint32_t Blower::getSpeed() { 
     return m_speed; 
-}
+};
+
+char *  Blower::getname() { 
+    return _name ; 
+};
+
+void  Blower::setname(char * n) { 
+    _name = n; 
+};
+

@@ -4,11 +4,12 @@
 
  
 buzzer_ctrl::buzzer_ctrl(PinName pin):_pwm(pin) {
-    _pwm.write(0.0);     // after creating it have to be off
+      _pwm.period(1.0/480);
+    _pwm.write(1);     // after creating it have to be off
 };
  
 void buzzer_ctrl::nobeep() {
-    _pwm.write(0.0);
+    _pwm.write(1.0);
 };
  
 /** Beep with given frequency and duration.

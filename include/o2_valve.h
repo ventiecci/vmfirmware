@@ -11,7 +11,8 @@ public:
    o2_valve_ctrl (const PinName pwmPinOut); 
    void close();
    void open();
-   void open(float duty);
+   void openA(float duty);
+   void openD(int us);
 
 private:
     PwmOut _pwm;

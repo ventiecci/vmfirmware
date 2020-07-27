@@ -32,8 +32,9 @@
  float pressure_sensor::readCMH2O(){
 
        float ppsi= readPsi();
-       return ppsi/0.014223343334285;
-
+       return ppsi/0.014;
+      
+   
  };
 
 bool  pressure_sensor::min_pressure_level(float val){
